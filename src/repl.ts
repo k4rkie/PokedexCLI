@@ -1,7 +1,3 @@
-import process from "process";
-import { createInterface } from "readline";
-import { commandExit } from "./command_exit.js";
-import { commandHelp } from "./command_help.js";
 import type { State } from "./state.js";
 
 export function cleanInput(input: string): string[] {
@@ -20,9 +16,13 @@ export function startRepl(state: State) {
 
   const commands = state.commands;
 
-  state.readLine.on("line", (input: string) => {
+  state.readLine.on("line", async (input: string) => {
     if (input in commands) {
-      commands[input].callback(state);
+      try {
+        await commands[input].callback(state);
+      } catch (err) {
+        console.log((err as Error).message);
+      }
       state.readLine.prompt();
     } else {
       console.log("Unknown command");
