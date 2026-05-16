@@ -4,11 +4,12 @@ import { commandHelp } from "./command_help.js";
 import { PokeAPI } from "./pokeapi.js";
 import { commandMap } from "./command_map.js";
 import { commandMapb } from "./command_mapb.js";
+import { commandExplore } from "./command_explore.js";
 
 export type CLICommand = {
   name: string;
   description: string;
-  callback: (state: State) => Promise<void>;
+  callback: (state: State, ...args: string[]) => Promise<void>;
 };
 
 export type State = {
@@ -47,8 +48,13 @@ export function initState(): State {
         description: "Displays the previous 20 location areas",
         callback: commandMapb,
       },
+      explore: {
+        name: "explore <area_name>",
+        description: "Displays list of pokemons in the given area",
+        callback: commandExplore,
+      },
     },
-    pokeapi: new PokeAPI(),
+    pokeapi: new PokeAPI(30000),
     nextLocationsURL: null,
     previousLocationsURL: null,
   };

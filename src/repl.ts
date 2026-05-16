@@ -17,9 +17,10 @@ export function startRepl(state: State) {
   const commands = state.commands;
 
   state.readLine.on("line", async (input: string) => {
-    if (input in commands) {
+    const [command, ...args] = input.split(" ");
+    if (command in commands) {
       try {
-        await commands[input].callback(state);
+        await commands[command].callback(state, ...args);
       } catch (err) {
         console.log((err as Error).message);
       }

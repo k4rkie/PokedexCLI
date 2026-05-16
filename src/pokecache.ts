@@ -20,9 +20,9 @@ export class Cache {
     });
   }
 
-  get<T>(key: string) {
+  get<T>(key: string): T | undefined {
     if (this.#cache.has(key)) {
-      return this.#cache.get(key);
+      return this.#cache.get(key)?.value;
     }
     return undefined;
   }
@@ -41,7 +41,7 @@ export class Cache {
   #startReapLoop() {
     this.#reapIntervalId = setInterval(() => this.#reap(), this.#interval);
   }
-  startReapLoop() {
+  stopReapLoop() {
     clearInterval(this.#reapIntervalId);
     this.#reapIntervalId = undefined;
   }
