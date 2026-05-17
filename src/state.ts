@@ -1,10 +1,13 @@
 import { createInterface, type Interface } from "readline";
 import { commandExit } from "./command_exit.js";
 import { commandHelp } from "./command_help.js";
-import { PokeAPI } from "./pokeapi.js";
+import { PokeAPI, Pokemon } from "./pokeapi.js";
 import { commandMap } from "./command_map.js";
 import { commandMapb } from "./command_mapb.js";
 import { commandExplore } from "./command_explore.js";
+import { commandCatch } from "./command_catch.js";
+import { commandInspect } from "./command_inspect.js";
+import { commandPokedex } from "./command_pokedex.js";
 
 export type CLICommand = {
   name: string;
@@ -15,9 +18,10 @@ export type CLICommand = {
 export type State = {
   readLine: Interface;
   commands: Record<string, CLICommand>;
-  pokeapi: PokeAPI;
   nextLocationsURL: string | null;
   previousLocationsURL: string | null;
+  pokeapi: PokeAPI;
+  pokedex: Record<string, Pokemon>;
 };
 
 export function initState(): State {
@@ -50,11 +54,27 @@ export function initState(): State {
       },
       explore: {
         name: "explore <area_name>",
-        description: "Displays list of pokemons in the given area",
+        description: "Displays list of Pokemons in the given area",
         callback: commandExplore,
+      },
+      catch: {
+        name: "catch <pokemon>",
+        description: "Catch a Pokemon",
+        callback: commandCatch,
+      },
+      inspect: {
+        name: "inspect <pokemon>",
+        description: "See details about the pokemon you've caught",
+        callback: commandInspect,
+      },
+      pokedex: {
+        name: "pokedex",
+        description: "See the list of pokemon you've caught",
+        callback: commandPokedex,
       },
     },
     pokeapi: new PokeAPI(30000),
+    pokedex: {},
     nextLocationsURL: null,
     previousLocationsURL: null,
   };

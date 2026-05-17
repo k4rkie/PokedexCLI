@@ -60,6 +60,34 @@ export class PokeAPI {
 
     return Location;
   }
+
+  async fetchPokemon(pokemonName: string): Promise<Pokemon> {
+    const currentURL = `${PokeAPI.baseURL}/pokemon/${pokemonName}`;
+    const response = await fetch(currentURL, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const pokemonDetail = await response.json();
+    let pokemonStats = {} as Pokemon["stats"];
+    for (let item of pokemonDetail.stats) {
+      const key: keyof Pokemon["stats"] = item.stat.name;
+      pokemonStats[key] = item.base_stat;
+    }
+    let pokemonTypes: string[] = pokemonDetail.types.map(
+      (entry: { type: { name: string } }) => entry.type.name,
+    );
+    const Pokemon: Pokemon = {
+      name: pokemonName,
+      baseExperience: pokemonDetail.base_experience,
+      height: pokemonDetail.height,
+      weight: pokemonDetail.weight,
+      stats: pokemonStats,
+      types: pokemonTypes,
+    };
+    return Pokemon;
+  }
 }
 
 export type ShallowLocations = {
@@ -77,4 +105,20 @@ export type Location = {
   pokemonEncounters: {
     name: string;
   }[];
+};
+
+export type Pokemon = {
+  name: string;
+  baseExperience: number;
+  height: number;
+  weight: number;
+  stats: {
+    hp: number;
+    attack: number;
+    defence: number;
+    specialAttack: number;
+    specialDefense: number;
+    speed: number;
+  };
+  types: string[];
 };
